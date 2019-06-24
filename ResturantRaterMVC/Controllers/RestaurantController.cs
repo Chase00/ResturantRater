@@ -1,6 +1,7 @@
 ﻿using ResturantRaterMVC.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Web;
@@ -38,6 +39,35 @@ namespace ResturantRaterMVC.Controllers
             return View(restaurant);
         }
 
+        // GET: Restaurant/Edit/{id}
+        public ActionResult Edit(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Restaurant restaurant = _db.Restaurants.Find(id);
+            if (restaurant == null)
+            {
+                return HttpNotFound();
+            }
+            return View(restaurant);
+        }
+
+        // POST: Restaurant/Edit/{id}
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(Restaurant restaurant)
+        {
+            if (ModelState.IsValid)
+            {
+                _db.Entry(restaurant).State = EntityState.Modified; // Finding the state of the object (Has it changed?)
+                _db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            return View(restaurant);
+        }
+
         // GET: Restaurant/Delete/{id}
         public ActionResult Delete(int? id)
         {
@@ -65,5 +95,7 @@ namespace ResturantRaterMVC.Controllers
 
             return RedirectToAction("Index");
         }
+
+
     }
 }
